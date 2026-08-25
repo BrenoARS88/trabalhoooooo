@@ -5,349 +5,267 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Feirão Técnico - Maquete Arduino 3D</title>
 
-  <!-- Three.js: biblioteca gratuita para o modelo 3D no navegador -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-  <!-- OrbitControls: permite girar o modelo 3D com o mouse -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+  <!-- Three.js — arquivo local, funciona sem internet -->
+  <script src="three.min.js"></script>
 
   <style>
-    /* =============================================
-       VARIÁVEIS DE COR - suas cores personalizadas
-       ============================================= */
     :root {
-      --roxo-escuro:  #512b52;
-      --roxo-medio:   #635274;
-      --verde-agua:   #7bb0a8;
-      --verde-claro:  #a7dbab;
-      --amarelo-suave:#e4f5b1;
+      --roxo-escuro:   #512b52;
+      --roxo-medio:    #635274;
+      --verde-agua:    #7bb0a8;
+      --verde-claro:   #a7dbab;
+      --amarelo-suave: #e4f5b1;
     }
 
-    /* =============================================
-       RESET GERAL - remove espaços padrão do navegador
-       ============================================= */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Segoe UI', Arial, sans-serif;
       background-color: var(--roxo-escuro);
       color: var(--amarelo-suave);
-      scroll-behavior: smooth; /* rolagem suave ao clicar nos links */
+      scroll-behavior: smooth;
     }
 
-    /* =============================================
-       NAVBAR - barra de navegação no topo
-       ============================================= */
+    /* ---- NAVBAR ---- */
     nav {
       background-color: var(--roxo-medio);
-      position: sticky; /* fica fixo no topo ao rolar a página */
-      top: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
       padding: 14px 32px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.4);
     }
+    nav .logo { font-size: 1.3rem; font-weight: bold; color: var(--amarelo-suave); letter-spacing: 1px; }
+    nav ul { list-style: none; display: flex; gap: 24px; }
+    nav ul li a { color: var(--verde-claro); text-decoration: none; font-size: 0.95rem; transition: color 0.3s; }
+    nav ul li a:hover { color: var(--amarelo-suave); }
 
-    nav .logo {
-      font-size: 1.3rem;
-      font-weight: bold;
-      color: var(--amarelo-suave);
-      letter-spacing: 1px;
-    }
-
-    /* Links da navbar */
-    nav ul {
-      list-style: none;
-      display: flex;
-      gap: 24px;
-    }
-
-    nav ul li a {
-      color: var(--verde-claro);
-      text-decoration: none;
-      font-size: 0.95rem;
-      transition: color 0.3s; /* animação suave na cor ao passar o mouse */
-    }
-
-    nav ul li a:hover {
-      color: var(--amarelo-suave);
-    }
-
-    /* =============================================
-       HERO - seção inicial com título e chamada
-       ============================================= */
+    /* ---- HERO ---- */
     #inicio {
       text-align: center;
       padding: 80px 20px 40px;
       background: linear-gradient(135deg, var(--roxo-escuro), var(--roxo-medio));
     }
-
-    #inicio h1 {
-      font-size: 2.8rem;
-      color: var(--amarelo-suave);
-      margin-bottom: 16px;
-    }
-
-    #inicio p {
-      font-size: 1.15rem;
-      color: var(--verde-claro);
-      max-width: 620px;
-      margin: 0 auto 32px;
-      line-height: 1.7;
-    }
+    #inicio h1 { font-size: 2.8rem; color: var(--amarelo-suave); margin-bottom: 16px; }
+    #inicio p  { font-size: 1.15rem; color: var(--verde-claro); max-width: 620px; margin: 0 auto 32px; line-height: 1.7; }
 
     .btn {
       display: inline-block;
-      background-color: var(--verde-agua);
-      color: var(--roxo-escuro);
-      padding: 12px 28px;
-      border-radius: 30px;
-      font-weight: bold;
-      font-size: 1rem;
-      text-decoration: none;
+      background-color: var(--verde-agua); color: var(--roxo-escuro);
+      padding: 12px 28px; border-radius: 30px;
+      font-weight: bold; font-size: 1rem; text-decoration: none;
       transition: background-color 0.3s, transform 0.2s;
     }
+    .btn:hover { background-color: var(--verde-claro); transform: scale(1.05); }
 
-    .btn:hover {
-      background-color: var(--verde-claro);
-      transform: scale(1.05); /* cresce um pouco ao passar o mouse */
-    }
+    /* ---- SEÇÃO 3D ---- */
+    #modelo3d { padding: 60px 20px; text-align: center; background-color: var(--roxo-escuro); }
+    #modelo3d h2 { font-size: 2rem; color: var(--verde-claro); margin-bottom: 10px; }
+    #modelo3d p.subtitulo { color: var(--verde-agua); margin-bottom: 28px; font-size: 0.95rem; }
 
-    /* =============================================
-       SEÇÃO MODELO 3D
-       ============================================= */
-    #modelo3d {
-      padding: 60px 20px;
-      text-align: center;
-      background-color: var(--roxo-escuro);
-    }
-
-    #modelo3d h2 {
-      font-size: 2rem;
-      color: var(--verde-claro);
-      margin-bottom: 10px;
-    }
-
-    #modelo3d p.subtitulo {
-      color: var(--verde-agua);
-      margin-bottom: 28px;
-      font-size: 0.95rem;
-    }
-
-    /* Container onde o Three.js vai desenhar o modelo */
     #canvas-container {
-      width: 100%;
-      max-width: 700px;
-      height: 420px;
-      margin: 0 auto;
-      border-radius: 16px;
-      overflow: hidden;
+      width: 100%; max-width: 900px; height: 500px;
+      margin: 0 auto; border-radius: 16px; overflow: hidden;
       border: 2px solid var(--verde-agua);
-      background: #1a0f1e;
-      position: relative;
+      background: #0d1b2a;
     }
+    #canvas-container canvas { display: block; width: 100% !important; height: 100% !important; }
 
-    #canvas-container canvas {
-      display: block;
-      width: 100% !important;
-      height: 100% !important;
-    }
-
-    .dica-3d {
-      margin-top: 12px;
-      font-size: 0.85rem;
+    /* Mensagem de carregando */
+    #loading-msg {
       color: var(--verde-agua);
-      opacity: 0.8;
-    }
-
-    /* =============================================
-       SEÇÃO DE EXPLICAÇÃO
-       ============================================= */
-    #explicacao {
-      padding: 60px 20px;
-      background-color: var(--roxo-medio);
-    }
-
-    #explicacao h2 {
-      text-align: center;
-      font-size: 2rem;
-      color: var(--amarelo-suave);
-      margin-bottom: 40px;
-    }
-
-    /* Grade de cartões de explicação */
-    .cards-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 24px;
-      justify-content: center;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
-    .card {
-      background-color: var(--roxo-escuro);
-      border-left: 4px solid var(--verde-agua);
-      border-radius: 10px;
-      padding: 24px;
-      flex: 1 1 260px;
-      max-width: 300px;
-      transition: transform 0.3s;
-    }
-
-    .card:hover {
-      transform: translateY(-6px); /* sobe um pouco ao passar o mouse */
-    }
-
-    .card .icone {
-      font-size: 2rem;
-      margin-bottom: 12px;
-    }
-
-    .card h3 {
-      color: var(--verde-claro);
-      margin-bottom: 10px;
-      font-size: 1.1rem;
-    }
-
-    .card p {
-      color: var(--amarelo-suave);
-      font-size: 0.9rem;
-      line-height: 1.6;
-      opacity: 0.9;
-    }
-
-    /* =============================================
-       SEÇÃO PASSO A PASSO
-       ============================================= */
-    #passo-a-passo {
-      padding: 60px 20px;
-      background-color: var(--roxo-escuro);
-    }
-
-    #passo-a-passo h2 {
-      text-align: center;
-      font-size: 2rem;
-      color: var(--verde-claro);
-      margin-bottom: 40px;
-    }
-
-    .passos {
-      max-width: 800px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    /* Cada etapa do passo a passo */
-    .passo {
-      background-color: var(--roxo-medio);
-      border-radius: 12px;
-      padding: 20px 24px;
-      display: flex;
-      gap: 20px;
-      align-items: flex-start;
-      cursor: pointer; /* indica que é clicável */
-      transition: background-color 0.3s;
-    }
-
-    .passo:hover {
-      background-color: #6e5a80;
-    }
-
-    /* Número do passo */
-    .passo-numero {
-      background-color: var(--verde-agua);
-      color: var(--roxo-escuro);
-      font-weight: bold;
-      font-size: 1.2rem;
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
+      font-size: 1rem;
+      padding: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
+      height: 100%;
     }
 
-    .passo-conteudo h3 {
+    /* ---- PAINEL DE AUTOMAÇÃO ---- */
+    #painel-automacao {
+      width: 100%;
+      max-width: 900px;
+      margin: 24px auto 0;
+      background-color: var(--roxo-medio);
+      border-radius: 16px;
+      padding: 20px 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      border: 1px solid rgba(123,176,168,0.25);
+    }
+
+    .painel-secao {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .painel-secao-titulo {
+      font-size: 0.72rem;
+      font-weight: bold;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--verde-agua);
+      border-bottom: 1px solid rgba(123,176,168,0.3);
+      padding-bottom: 6px;
+      margin-bottom: 2px;
+    }
+
+    /* RGB picker */
+    .rgb-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .rgb-row label { font-size: 0.88rem; color: var(--amarelo-suave); flex: 1; }
+    #cor-lampada {
+      width: 44px; height: 32px;
+      border: 2px solid var(--verde-agua);
+      border-radius: 8px;
+      cursor: pointer;
+      background: transparent;
+      padding: 2px;
+    }
+
+    /* Botões de cenas */
+    .cenas-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* Botões genéricos do painel */
+    .btn-painel {
+      background-color: var(--roxo-escuro);
       color: var(--amarelo-suave);
-      margin-bottom: 8px;
+      border: 2px solid var(--verde-agua);
+      border-radius: 20px;
+      padding: 7px 14px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      transition: background-color 0.2s, transform 0.15s, opacity 0.2s;
+      white-space: nowrap;
+    }
+    .btn-painel:hover  { background-color: var(--verde-agua); color: var(--roxo-escuro); transform: scale(1.04); }
+    .btn-painel.ativo  { background-color: var(--verde-claro); color: var(--roxo-escuro); border-color: var(--verde-claro); }
+
+    /* Toggle full-width */
+    .btn-toggle {
+      width: 100%;
+      padding: 9px 14px;
+      font-size: 0.88rem;
     }
 
-    .passo-conteudo p {
-      color: var(--verde-claro);
-      font-size: 0.9rem;
-      line-height: 1.6;
+    /* Consumo */
+    #consumo-painel {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
     }
-
-    /* Bloco de código */
-    .codigo {
-      background-color: #1a0f1e;
-      border-left: 3px solid var(--verde-agua);
-      border-radius: 6px;
-      padding: 12px 16px;
-      margin-top: 10px;
-      font-family: 'Courier New', monospace;
+    .consumo-linha {
+      display: flex;
+      justify-content: space-between;
       font-size: 0.85rem;
       color: var(--amarelo-suave);
-      white-space: pre-wrap; /* mantém formatação do código */
-      overflow-x: auto;
     }
-
-    /* =============================================
-       RODAPÉ
-       ============================================= */
-    footer {
-      background-color: var(--roxo-medio);
-      text-align: center;
-      padding: 28px 20px;
-      color: var(--verde-agua);
-      font-size: 0.9rem;
-    }
-
-    footer span {
+    .consumo-linha.total {
+      border-top: 1px solid rgba(123,176,168,0.3);
+      padding-top: 5px;
+      margin-top: 2px;
+      font-weight: bold;
       color: var(--verde-claro);
     }
+    .consumo-linha span {
+      color: var(--verde-agua);
+      font-weight: bold;
+      min-width: 36px;
+      text-align: right;
+    }
 
-    /* =============================================
-       RESPONSIVIDADE - ajustes para celular
-       ============================================= */
+    /* ---- PAINEL DE CONTROLE (botões Arduino legados) ---- */
+    #painel-controle {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      justify-content: center; margin-top: 0;
+    }
+    .btn-controle {
+      background-color: var(--roxo-medio); color: var(--amarelo-suave);
+      border: 2px solid var(--verde-agua); border-radius: 20px;
+      padding: 5px 13px; font-size: 0.78rem; cursor: pointer;
+      transition: background-color 0.2s, transform 0.15s, opacity 0.2s;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    .btn-controle:hover { background-color: var(--verde-agua); color: var(--roxo-escuro); transform: scale(1.05); }
+    .btn-controle.desligado { opacity: 0.35; border-color: #666; }
+
+    .dica-3d { margin-top: 14px; font-size: 0.85rem; color: var(--verde-agua); opacity: 0.8; }
+
     @media (max-width: 600px) {
-      #inicio h1 {
-        font-size: 1.9rem;
-      }
+      #painel-automacao { grid-template-columns: 1fr; padding: 16px; }
+      .cenas-row { flex-direction: column; }
+      .btn-toggle { font-size: 0.82rem; }
+    }
 
-      nav .logo {
-        font-size: 1rem;
-      }
+    /* ---- EXPLICAÇÃO ---- */
+    #explicacao { padding: 60px 20px; background-color: var(--roxo-medio); }
+    #explicacao h2 { text-align: center; font-size: 2rem; color: var(--amarelo-suave); margin-bottom: 40px; }
 
-      nav ul {
-        gap: 12px;
-      }
+    .cards-grid { display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; max-width: 1000px; margin: 0 auto; }
 
-      nav ul li a {
-        font-size: 0.82rem;
-      }
+    .card {
+      background-color: var(--roxo-escuro); border-left: 4px solid var(--verde-agua);
+      border-radius: 10px; padding: 24px; flex: 1 1 260px; max-width: 300px;
+      transition: transform 0.3s;
+    }
+    .card:hover { transform: translateY(-6px); }
+    .card .icone { font-size: 2rem; margin-bottom: 12px; }
+    .card h3 { color: var(--verde-claro); margin-bottom: 10px; font-size: 1.1rem; }
+    .card p  { color: var(--amarelo-suave); font-size: 0.9rem; line-height: 1.6; opacity: 0.9; }
 
-      #canvas-container {
-        height: 280px;
-      }
+    /* ---- PASSO A PASSO ---- */
+    #passo-a-passo { padding: 60px 20px; background-color: var(--roxo-escuro); }
+    #passo-a-passo h2 { text-align: center; font-size: 2rem; color: var(--verde-claro); margin-bottom: 40px; }
+
+    .passos { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+
+    .passo {
+      background-color: var(--roxo-medio); border-radius: 12px; padding: 20px 24px;
+      display: flex; gap: 20px; align-items: flex-start;
+      cursor: pointer; transition: background-color 0.3s;
+    }
+    .passo:hover { background-color: #6e5a80; }
+    .passo-numero {
+      background-color: var(--verde-agua); color: var(--roxo-escuro);
+      font-weight: bold; font-size: 1.2rem; width: 42px; height: 42px;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .passo-conteudo h3 { color: var(--amarelo-suave); margin-bottom: 8px; }
+    .passo-conteudo p  { color: var(--verde-claro); font-size: 0.9rem; line-height: 1.6; }
+    .codigo {
+      background-color: #1a0f1e; border-left: 3px solid var(--verde-agua);
+      border-radius: 6px; padding: 12px 16px; margin-top: 10px;
+      font-family: 'Courier New', monospace; font-size: 0.85rem;
+      color: var(--amarelo-suave); white-space: pre-wrap; overflow-x: auto;
+    }
+
+    /* ---- FOOTER ---- */
+    footer { background-color: var(--roxo-medio); text-align: center; padding: 28px 20px; color: var(--verde-agua); font-size: 0.9rem; }
+    footer span { color: var(--verde-claro); }
+
+    /* ---- RESPONSIVO ---- */
+    @media (max-width: 600px) {
+      #inicio h1    { font-size: 1.9rem; }
+      nav .logo     { font-size: 1rem; }
+      nav ul        { gap: 12px; }
+      nav ul li a   { font-size: 0.82rem; }
+      #canvas-container { height: 300px; }
     }
   </style>
 </head>
-
 <body>
 
-  <!-- ============================================================
-       NAVBAR
-       ============================================================ -->
+  <!-- NAVBAR -->
   <nav>
     <div class="logo">⚡ Feirão Técnico</div>
     <ul>
@@ -358,194 +276,206 @@
     </ul>
   </nav>
 
-  <!-- ============================================================
-       HERO - seção de boas vindas
-       ============================================================ -->
+  <!-- HERO -->
   <section id="inicio">
     <h1>Maquete Inteligente com Arduino</h1>
     <p>
-      Explore nossa maquete interativa e aprenda como funciona o Arduino
-      de forma visual e prática. Gire o modelo 3D, leia as explicações
-      e siga o passo a passo para reproduzir em casa!
+      Explore nossa maquete 3D interativa de uma casa automatizada com Arduino.
+      Gire o modelo, veja os LEDs piscarem, o sensor PIR detectar movimento
+      e a luz da casa acender — tudo simulado em tempo real!
     </p>
     <a href="#modelo3d" class="btn">Ver o Modelo 3D →</a>
   </section>
 
-  <!-- ============================================================
-       MODELO 3D
-       ============================================================ -->
+  <!-- MODELO 3D -->
   <section id="modelo3d">
     <h2>Modelo 3D da Maquete</h2>
-    <p class="subtitulo">Clique e arraste para girar • Scroll para dar zoom</p>
+    <p class="subtitulo">Clique e arraste para girar · Scroll para zoom</p>
 
-    <!-- O Three.js vai colocar o canvas aqui automaticamente -->
-    <div id="canvas-container"></div>
+    <div id="canvas-container">
+      <div id="loading-msg">⏳ Carregando modelo 3D...</div>
+    </div>
 
-    <p class="dica-3d">💡 Representação 3D da maquete — modelo detalhado será adicionado em breve</p>
+    <!-- PAINEL DE AUTOMAÇÃO RESIDENCIAL -->
+    <div id="painel-automacao">
+
+      <!-- 1. SELETOR RGB -->
+      <div class="painel-secao">
+        <div class="painel-secao-titulo">🎨 Cor da Lâmpada</div>
+        <div class="rgb-row">
+          <label for="cor-lampada">Selecione a cor</label>
+          <input
+            type="color"
+            id="cor-lampada"
+            value="#ffffff"
+            oninput="window.setCorRGB(this.value)"
+          />
+        </div>
+      </div>
+
+      <!-- 2. CENAS PRÉ-DEFINIDAS -->
+      <div class="painel-secao">
+        <div class="painel-secao-titulo">🎭 Cenas</div>
+        <div class="cenas-row">
+          <button class="btn-painel" onclick="setCena('cinema')">🎬 Cinema</button>
+          <button class="btn-painel" onclick="setCena('leitura')">📖 Leitura</button>
+          <button class="btn-painel" onclick="setCena('festa')">🎉 Festa</button>
+        </div>
+      </div>
+
+      <!-- 3. CICLO DIA/NOITE -->
+      <div class="painel-secao">
+        <div class="painel-secao-titulo">🌅 Ambiente</div>
+        <button
+          class="btn-painel btn-toggle"
+          id="btn-dia-noite"
+          onclick="toggleDiaNOite()"
+        >☀️ Dia / 🌙 Noite</button>
+
+        <!-- 4. SIMULADOR DE PRESENÇA -->
+        <button
+          class="btn-painel btn-toggle"
+          id="btn-presenca"
+          onclick="togglePresenca()"
+        >👤 Simular Presença</button>
+      </div>
+
+      <!-- 5. INDICADOR DE CONSUMO -->
+      <div class="painel-secao">
+        <div class="painel-secao-titulo">⚡ Consumo Estimado</div>
+        <div id="consumo-painel">
+          <div class="consumo-linha">
+            <span>🛋️ Sala</span>
+            <span><span id="w-sala">0</span> W</span>
+          </div>
+          <div class="consumo-linha">
+            <span>🛏️ Quarto</span>
+            <span><span id="w-quarto">0</span> W</span>
+          </div>
+          <div class="consumo-linha">
+            <span>🍳 Cozinha</span>
+            <span><span id="w-cozinha">0</span> W</span>
+          </div>
+          <div class="consumo-linha total">
+            <span>⚡ Total</span>
+            <span><span id="w-total">0</span> W</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- /PAINEL DE AUTOMAÇÃO -->
+
+    <!-- COMPONENTES ARDUINO (botões originais, versão compacta) -->
+    <div style="max-width:900px;margin:14px auto 0;text-align:center;">
+      <div style="font-size:0.72rem;font-weight:bold;letter-spacing:0.08em;text-transform:uppercase;color:var(--verde-agua);margin-bottom:8px;opacity:0.8;">
+        🔧 Componentes Arduino
+      </div>
+      <div id="painel-controle">
+        <button class="btn-controle" id="btn-led-vermelho" onclick="toggleComp('ledR')">🔴 LED R</button>
+        <button class="btn-controle" id="btn-led-verde"    onclick="toggleComp('ledG')">🟢 LED G</button>
+        <button class="btn-controle" id="btn-led-azul"     onclick="toggleComp('ledB')">🔵 LED B</button>
+        <button class="btn-controle" id="btn-pir"          onclick="toggleComp('pir')">📡 PIR</button>
+        <button class="btn-controle" id="btn-luz"          onclick="toggleComp('luz')">💡 Luz</button>
+      </div>
+    </div>
+
+    <p class="dica-3d">🖱️ Esquerdo: órbita · Direito: pan · Scroll: zoom · F: enquadrar · O: ortográfica</p>
   </section>
 
-  <!-- ============================================================
-       EXPLICAÇÃO DO PROJETO
-       ============================================================ -->
+  <!-- EXPLICAÇÃO -->
   <section id="explicacao">
     <h2>Entendendo o Projeto</h2>
-
     <div class="cards-grid">
 
       <div class="card">
         <div class="icone">🔌</div>
         <h3>O que é Arduino?</h3>
-        <p>
-          Arduino é uma plataforma de prototipagem eletrônica de código aberto.
-          Com ele você pode controlar LEDs, motores, sensores e muito mais
-          programando em linguagem C/C++ simplificada.
-        </p>
+        <p>Arduino é uma plataforma de prototipagem de código aberto. Com ele você controla LEDs, sensores e motores programando em C/C++ simplificado.</p>
       </div>
 
       <div class="card">
-        <div class="icone">🏗️</div>
-        <h3>A Maquete</h3>
-        <p>
-          Nossa maquete simula um ambiente real controlado por Arduino.
-          Ela demonstra como sensores e atuadores trabalham juntos para
-          automatizar tarefas do dia a dia.
-        </p>
+        <div class="icone">🏠</div>
+        <h3>A Casa Inteligente</h3>
+        <p>A casa 3D representa uma residência automatizada com Arduino: luz interna, sensor PIR na entrada e LEDs coloridos simulando iluminação digital.</p>
       </div>
 
       <div class="card">
         <div class="icone">📡</div>
-        <h3>Sensores Usados</h3>
-        <p>
-          Utilizamos sensor de presença (PIR), sensor de luminosidade (LDR)
-          e sensor de temperatura (DHT11) para tornar a maquete reativa
-          ao ambiente ao redor.
-        </p>
+        <h3>Sensor PIR</h3>
+        <p>O domo branco no modelo é o sensor PIR. Ele detecta movimento por calor infravermelho — a cada 5 segundos ele "detecta alguém" e pisca em laranja.</p>
       </div>
 
       <div class="card">
         <div class="icone">💡</div>
-        <h3>Atuadores</h3>
-        <p>
-          LEDs, buzzer e servo motor respondem aos sensores em tempo real,
-          criando um sistema automatizado que acende luzes, emite sons
-          e move partes da maquete.
-        </p>
+        <h3>LEDs e Luz Interna</h3>
+        <p>Os 3 LEDs na breadboard piscam em ritmos diferentes, simulando os pinos digitais do Arduino. A luz amarela nas janelas simula a iluminação interna.</p>
       </div>
 
       <div class="card">
-        <div class="icone">🖥️</div>
-        <h3>Programação</h3>
-        <p>
-          Todo o código é escrito na Arduino IDE (gratuita). O programa
-          lê os sensores, processa os dados e envia comandos para os
-          atuadores em milissegundos.
-        </p>
+        <div class="icone">🔗</div>
+        <h3>Fios e Circuito</h3>
+        <p>Os fios curvos ligam o Arduino à breadboard e ao sensor PIR. Vermelho = VCC, Preto = GND, Amarelo/Azul/Verde = pinos digitais.</p>
       </div>
 
       <div class="card">
-        <div class="icone">🎯</div>
-        <h3>Objetivo</h3>
-        <p>
-          Mostrar de forma simples e visual como a eletrônica e a programação
-          se combinam para criar soluções inteligentes acessíveis a qualquer
-          pessoa com curiosidade.
-        </p>
+        <div class="icone">🎮</div>
+        <h3>Painel Interativo</h3>
+        <p>Os botões acima simulam o comando <strong>digitalWrite(pino, HIGH/LOW)</strong> do Arduino, ligando e desligando cada componente em tempo real.</p>
       </div>
 
     </div>
   </section>
 
-  <!-- ============================================================
-       PASSO A PASSO
-       ============================================================ -->
+  <!-- PASSO A PASSO -->
   <section id="passo-a-passo">
     <h2>Passo a Passo: Comandos Arduino</h2>
-
     <div class="passos">
 
-      <!-- Passo 1 -->
       <div class="passo">
         <div class="passo-numero">1</div>
         <div class="passo-conteudo">
           <h3>Configurar os pinos (setup)</h3>
-          <p>
-            A função <strong>setup()</strong> roda uma vez ao ligar o Arduino.
-            Aqui você define quais pinos serão de entrada (sensores) e saída (LEDs, etc).
-          </p>
+          <p>A função <strong>setup()</strong> roda uma vez ao ligar. Define quais pinos são entrada (sensores) ou saída (LEDs).</p>
           <div class="codigo">void setup() {
-  pinMode(13, OUTPUT);  // pino 13 como saída (LED)
-  pinMode(7, INPUT);    // pino 7 como entrada (sensor)
-  Serial.begin(9600);   // inicia comunicação com o PC
+  pinMode(13, OUTPUT); // LED
+  pinMode(7,  INPUT);  // sensor PIR
+  Serial.begin(9600);
 }</div>
         </div>
       </div>
 
-      <!-- Passo 2 -->
       <div class="passo">
         <div class="passo-numero">2</div>
         <div class="passo-conteudo">
-          <h3>Loop principal (loop)</h3>
-          <p>
-            A função <strong>loop()</strong> fica repetindo para sempre.
-            É aqui onde você coloca a lógica principal do programa.
-          </p>
+          <h3>Loop principal</h3>
+          <p>A função <strong>loop()</strong> repete para sempre — é onde fica toda a lógica do programa.</p>
           <div class="codigo">void loop() {
-  // tudo dentro aqui repete infinitamente
-  delay(1000); // espera 1 segundo (1000 milissegundos)
+  // repete infinitamente
+  delay(1000); // espera 1 segundo
 }</div>
         </div>
       </div>
 
-      <!-- Passo 3 -->
       <div class="passo">
         <div class="passo-numero">3</div>
         <div class="passo-conteudo">
-          <h3>Acender e apagar um LED</h3>
-          <p>
-            Use <strong>digitalWrite</strong> para ligar (HIGH) ou desligar (LOW)
-            um pino digital. Perfeito para controlar LEDs.
-          </p>
-          <div class="codigo">digitalWrite(13, HIGH); // liga o LED
-delay(1000);            // espera 1 segundo
-digitalWrite(13, LOW);  // apaga o LED
-delay(1000);            // espera mais 1 segundo</div>
+          <h3>Acender e apagar LED</h3>
+          <p>Use <strong>digitalWrite</strong> para ligar (HIGH) ou desligar (LOW) um pino digital.</p>
+          <div class="codigo">digitalWrite(13, HIGH); // acende
+delay(1000);
+digitalWrite(13, LOW);  // apaga
+delay(1000);</div>
         </div>
       </div>
 
-      <!-- Passo 4 -->
       <div class="passo">
         <div class="passo-numero">4</div>
         <div class="passo-conteudo">
-          <h3>Ler um sensor digital (PIR)</h3>
-          <p>
-            Use <strong>digitalRead</strong> para ler se um sensor está ligado (1)
-            ou desligado (0). O sensor PIR detecta movimento.
-          </p>
-          <div class="codigo">int presenca = digitalRead(7); // lê o pino 7
-
+          <h3>Ler sensor PIR</h3>
+          <p>Use <strong>digitalRead</strong> para saber se o PIR detectou movimento (HIGH = sim, LOW = não).</p>
+          <div class="codigo">int presenca = digitalRead(7);
 if (presenca == HIGH) {
-  digitalWrite(13, HIGH); // acende LED se detectar movimento
-} else {
-  digitalWrite(13, LOW);  // apaga se não houver movimento
-}</div>
-        </div>
-      </div>
-
-      <!-- Passo 5 -->
-      <div class="passo">
-        <div class="passo-numero">5</div>
-        <div class="passo-conteudo">
-          <h3>Ler um sensor analógico (LDR)</h3>
-          <p>
-            Use <strong>analogRead</strong> para ler valores entre 0 e 1023.
-            O LDR mede a intensidade da luz — útil para ligar luzes automáticas.
-          </p>
-          <div class="codigo">int luz = analogRead(A0); // lê o sensor de luz no pino A0
-
-Serial.println(luz);     // mostra o valor no monitor serial
-
-if (luz < 300) {
-  // pouca luz → acende LED
   digitalWrite(13, HIGH);
 } else {
   digitalWrite(13, LOW);
@@ -553,29 +483,34 @@ if (luz < 300) {
         </div>
       </div>
 
-      <!-- Passo 6 -->
+      <div class="passo">
+        <div class="passo-numero">5</div>
+        <div class="passo-conteudo">
+          <h3>Ler sensor de luz (LDR)</h3>
+          <p>Use <strong>analogRead</strong> para ler valores de 0 a 1023. Útil para acender luzes automaticamente à noite.</p>
+          <div class="codigo">int luz = analogRead(A0);
+if (luz &lt; 300) {
+  digitalWrite(13, HIGH);
+} else {
+  digitalWrite(13, LOW);
+}</div>
+        </div>
+      </div>
+
       <div class="passo">
         <div class="passo-numero">6</div>
         <div class="passo-conteudo">
-          <h3>Controlar um servo motor</h3>
-          <p>
-            Servos são usados para mover partes da maquete. A biblioteca
-            <strong>Servo.h</strong> facilita o controle do ângulo.
-          </p>
-          <div class="codigo">#include &lt;Servo.h&gt;  // inclui a biblioteca de servo
-
-Servo meuServo;        // cria o objeto servo
-
-void setup() {
-  meuServo.attach(9);  // conecta o servo ao pino 9
-}
-
+          <h3>Controlar servo motor</h3>
+          <p>Servos movem partes da maquete. A biblioteca <strong>Servo.h</strong> controla o ângulo facilmente.</p>
+          <div class="codigo">#include &lt;Servo.h&gt;
+Servo meuServo;
+void setup() { meuServo.attach(9); }
 void loop() {
-  meuServo.write(0);   // move para 0 graus
+  meuServo.write(0);
   delay(1000);
-  meuServo.write(90);  // move para 90 graus
+  meuServo.write(90);
   delay(1000);
-  meuServo.write(180); // move para 180 graus
+  meuServo.write(180);
   delay(1000);
 }</div>
         </div>
@@ -584,224 +519,14 @@ void loop() {
     </div>
   </section>
 
-  <!-- ============================================================
-       RODAPÉ
-       ============================================================ -->
+  <!-- FOOTER -->
   <footer>
     <p>Desenvolvido com 💚 para o <span>Feirão Técnico</span> · 2026</p>
-    <p style="margin-top: 6px; font-size: 0.8rem; opacity: 0.7;">
-      Arduino · Three.js · HTML/CSS/JS
-    </p>
+    <p style="margin-top:6px;font-size:0.8rem;opacity:0.7;">Arduino · Three.js · HTML / CSS / JS</p>
   </footer>
 
-
-  <!-- ============================================================
-       JAVASCRIPT — Modelo 3D com Three.js
-       ============================================================ -->
-  <script>
-    // =============================================================
-    // CONFIGURAÇÃO INICIAL DO THREE.JS
-    // Three.js funciona com 3 elementos principais:
-    //   1. Scene    → o "palco" onde ficam os objetos
-    //   2. Camera   → o ponto de vista do observador
-    //   3. Renderer → renderiza (desenha) a cena na tela
-    // =============================================================
-
-    const container = document.getElementById('canvas-container');
-
-    // 1. CENA - onde os objetos vão existir
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x1a0f1e); // fundo escuro
-
-    // 2. CÂMERA - perspectiva parecida com olho humano
-    //    PerspectiveCamera(fov, proporção, near, far)
-    const camera = new THREE.PerspectiveCamera(
-      45,
-      container.clientWidth / container.clientHeight,
-      0.1,
-      1000
-    );
-    camera.position.set(4, 3, 6); // posição inicial da câmera
-
-    // 3. RENDERER - desenha a cena
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.shadowMap.enabled = true; // ativa sombras
-    container.appendChild(renderer.domElement); // coloca o canvas no HTML
-
-    // =============================================================
-    // CONTROLES DE ÓRBITA - permite girar com o mouse
-    // =============================================================
-    const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;    // movimento suave
-    controls.dampingFactor = 0.08;
-    controls.minDistance = 2;         // zoom mínimo
-    controls.maxDistance = 15;        // zoom máximo
-
-    // =============================================================
-    // ILUMINAÇÃO
-    // =============================================================
-
-    // Luz ambiente - ilumina tudo de forma suave
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
-    scene.add(ambientLight);
-
-    // Luz direcional - simula o sol, cria sombras
-    const dirLight = new THREE.DirectionalLight(0xe4f5b1, 1.0);
-    dirLight.position.set(5, 8, 5);
-    dirLight.castShadow = true;
-    scene.add(dirLight);
-
-    // Luz pontual colorida para dar visual interessante
-    const pointLight = new THREE.PointLight(0x7bb0a8, 0.8, 20);
-    pointLight.position.set(-3, 2, -3);
-    scene.add(pointLight);
-
-    // =============================================================
-    // CONSTRUÇÃO DA MAQUETE 3D
-    // Cada objeto usa: Geometry (forma) + Material (aparência) + Mesh
-    // =============================================================
-
-    // --- BASE DA MAQUETE (plataforma) ---
-    const baseGeometry = new THREE.BoxGeometry(5, 0.3, 4);
-    const baseMaterial = new THREE.MeshStandardMaterial({ color: 0x512b52 });
-    const base = new THREE.Mesh(baseGeometry, baseMaterial);
-    base.receiveShadow = true;
-    scene.add(base);
-
-    // --- GRADE (chão da maquete) ---
-    const gridHelper = new THREE.GridHelper(5, 10, 0x635274, 0x635274);
-    gridHelper.position.y = 0.16;
-    scene.add(gridHelper);
-
-    // --- PRÉDIO 1 (cubo grande) ---
-    const pred1Geo = new THREE.BoxGeometry(0.8, 1.6, 0.8);
-    const pred1Mat = new THREE.MeshStandardMaterial({ color: 0x635274 });
-    const pred1 = new THREE.Mesh(pred1Geo, pred1Mat);
-    pred1.position.set(-1.5, 1.0, -1.0);
-    pred1.castShadow = true;
-    scene.add(pred1);
-
-    // --- PRÉDIO 2 (cubo médio) ---
-    const pred2Geo = new THREE.BoxGeometry(0.7, 1.1, 0.7);
-    const pred2Mat = new THREE.MeshStandardMaterial({ color: 0x7bb0a8 });
-    const pred2 = new THREE.Mesh(pred2Geo, pred2Mat);
-    pred2.position.set(-0.3, 0.7, -1.0);
-    pred2.castShadow = true;
-    scene.add(pred2);
-
-    // --- PRÉDIO 3 (cubo pequeno) ---
-    const pred3Geo = new THREE.BoxGeometry(0.6, 0.8, 0.6);
-    const pred3Mat = new THREE.MeshStandardMaterial({ color: 0xa7dbab });
-    const pred3 = new THREE.Mesh(pred3Geo, pred3Mat);
-    pred3.position.set(0.7, 0.6, 0.5);
-    pred3.castShadow = true;
-    scene.add(pred3);
-
-    // --- ARDUINO (placa verde) ---
-    const arduinoGeo = new THREE.BoxGeometry(1.0, 0.08, 0.7);
-    const arduinoMat = new THREE.MeshStandardMaterial({ color: 0x00aa44 }); // verde Arduino
-    const arduino = new THREE.Mesh(arduinoGeo, arduinoMat);
-    arduino.position.set(1.5, 0.2, 0.8);
-    arduino.castShadow = true;
-    scene.add(arduino);
-
-    // Chip no Arduino (detalhe)
-    const chipGeo = new THREE.BoxGeometry(0.25, 0.06, 0.25);
-    const chipMat = new THREE.MeshStandardMaterial({ color: 0x111111 });
-    const chip = new THREE.Mesh(chipGeo, chipMat);
-    chip.position.set(1.5, 0.27, 0.8);
-    scene.add(chip);
-
-    // --- LED VERMELHO ---
-    const ledGeo = new THREE.SphereGeometry(0.08, 12, 12);
-    const ledMat = new THREE.MeshStandardMaterial({
-      color: 0xff2222,
-      emissive: 0xff0000,      // brilha sozinho
-      emissiveIntensity: 0.8
-    });
-    const led = new THREE.Mesh(ledGeo, ledMat);
-    led.position.set(-1.5, 1.85, -1.0);
-    scene.add(led);
-
-    // --- LED VERDE ---
-    const ledVerde = new THREE.Mesh(
-      new THREE.SphereGeometry(0.08, 12, 12),
-      new THREE.MeshStandardMaterial({
-        color: 0xa7dbab,
-        emissive: 0xa7dbab,
-        emissiveIntensity: 0.9
-      })
-    );
-    ledVerde.position.set(0.7, 1.05, 0.5);
-    scene.add(ledVerde);
-
-    // --- SENSOR (cilindro pequeno) ---
-    const sensorGeo = new THREE.CylinderGeometry(0.1, 0.1, 0.2, 16);
-    const sensorMat = new THREE.MeshStandardMaterial({ color: 0xe4f5b1 });
-    const sensor = new THREE.Mesh(sensorGeo, sensorMat);
-    sensor.position.set(1.8, 0.36, 0.2);
-    scene.add(sensor);
-
-    // --- ÁRVORE (cone + cilindro tronco) ---
-    const folhagem = new THREE.Mesh(
-      new THREE.ConeGeometry(0.3, 0.8, 8),
-      new THREE.MeshStandardMaterial({ color: 0xa7dbab })
-    );
-    folhagem.position.set(-1.0, 0.9, 1.2);
-    scene.add(folhagem);
-
-    const tronco = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.05, 0.05, 0.3, 8),
-      new THREE.MeshStandardMaterial({ color: 0x6b3a2a })
-    );
-    tronco.position.set(-1.0, 0.3, 1.2);
-    scene.add(tronco);
-
-    // --- ESTRADA (plano) ---
-    const estradaGeo = new THREE.PlaneGeometry(0.4, 3.5);
-    const estradaMat = new THREE.MeshStandardMaterial({ color: 0x333333 });
-    const estrada = new THREE.Mesh(estradaGeo, estradaMat);
-    estrada.rotation.x = -Math.PI / 2; // deita o plano no chão
-    estrada.position.set(0.2, 0.17, 0);
-    scene.add(estrada);
-
-    // =============================================================
-    // ANIMAÇÃO - loop que atualiza a cena continuamente
-    // =============================================================
-    let tempo = 0; // contador de tempo para animações
-
-    function animar() {
-      requestAnimationFrame(animar); // chama esta função no próximo frame
-
-      tempo += 0.02;
-
-      // LED piscando (emissive varia com o seno)
-      led.material.emissiveIntensity = 0.4 + 0.6 * Math.abs(Math.sin(tempo * 2));
-      ledVerde.material.emissiveIntensity = 0.4 + 0.6 * Math.abs(Math.sin(tempo * 2 + 1.5));
-
-      // Prédios "respirando" levemente (escala y)
-      pred1.scale.y = 1 + 0.015 * Math.sin(tempo);
-      pred1.position.y = 1.0 + 0.015 * Math.sin(tempo);
-
-      // Atualiza controles de órbita
-      controls.update();
-
-      // Renderiza a cena
-      renderer.render(scene, camera);
-    }
-
-    animar(); // inicia o loop
-
-    // =============================================================
-    // RESPONSIVIDADE - redimensiona o canvas se a janela mudar
-    // =============================================================
-    window.addEventListener('resize', () => {
-      camera.aspect = container.clientWidth / container.clientHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(container.clientWidth, container.clientHeight);
-    });
-  </script>
+  <!-- JS da cena 3D — carregado DEPOIS do Three.js -->
+  <script src="cena3d.js"></script>
 
 </body>
 </html>
